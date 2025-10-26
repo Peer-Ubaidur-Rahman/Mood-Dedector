@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeSapiens Mood Detector | Home</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', 'Inter', -apple-system, sans-serif;
+            background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding-top: 70px;
+            padding-bottom: 80px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: rgba(15, 15, 30, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 212, 255, 0.3);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+        .header-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            height: 100%;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .team-name {
+            font-size: 20px;
+            font-weight: 800;
+            color: white;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.7);
+        }
+        nav {
+            display: flex;
+            gap: 24px;
+        }
+        nav a {
+            font-size: 14px;
+            font-weight: 600;
+            color: #cbd5e1;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        nav a:hover {
+            color: #00d4ff;
+            text-shadow: 0 0 8px rgba(0, 212, 255, 0.8);
+        }
+        nav a.active {
+            color: #00d4ff;
+            border-bottom: 2px solid #00d4ff;
+        }
+        .hero {
+            text-align: center;
+            padding: 40px 20px 30px;
+        }
+        .hero-title {
+            font-size: 36px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #00d4ff, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+        .hero-subtitle {
+            font-size: 16px;
+            color: #cbd5e1;
+            max-width: 600px;
+            margin: 0 auto 30px;
+        }
+        .content-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        .split-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        .video-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 60px rgba(0, 212, 255, 0.15);
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #00d4ff;
+            margin-bottom: 16px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .video-container {
+            position: relative;
+            background: #000;
+            border-radius: 14px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+        }
+        #video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .controls {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4ff 0%, #a855f7 100%);
+            color: white;
+            padding: 12px 32px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
+            transition: all 0.3s ease;
+            flex: 1;
+            min-width: 140px;
+        }
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 212, 255, 0.6);
+        }
+        .btn-primary:disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: #64748b;
+            cursor: not-allowed;
+            box-shadow: none;
+            opacity: 0.5;
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+        }
+        .btn-secondary:hover:not(:disabled) {
+            box-shadow: 0 6px 25px rgba(239, 68, 68, 0.6);
+        }
+
+        .mood-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 60px rgba(168, 85, 247, 0.2);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .mood-display {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .mood-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 16px;
+        }
+
+        .mood-text {
+            font-size: 40px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #00d4ff, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+            min-height: 48px;
+        }
+
+        .mood-emoji {
+            font-size: 100px;
+            margin: 24px 0;
+            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.3));
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .confidence-badge {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(168, 85, 247, 0.2));
+            border: 1px solid rgba(0, 212, 255, 0.4);
+            padding: 12px 28px;
+            border-radius: 24px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #00d4ff;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+            display: inline-block;
+            margin-top: 16px;
+        }
+
+        .emotion-bars {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .emotion-bars h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #cbd5e1;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .emotion-bar {
+            margin-bottom: 12px;
+        }
+
+        .emotion-name {
+            font-size: 11px;
+            color: #94a3b8;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .emotion-progress {
+            background: rgba(255, 255, 255, 0.1);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .emotion-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4ff, #a855f7);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .status-info {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-left: 4px solid #00d4ff;
+            padding: 16px 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.15);
+        }
+
+        .status-text {
+            font-size: 13px;
+            color: #ffffff;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 10, 15, 0.95);
+            border-top: 1px solid rgba(0, 212, 255, 0.2);
+            padding: 14px 20px;
+            box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .footer-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .social-title {
+            font-size: 10px;
+            font-weight: 700;
+            color: #94a3b8;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .social-links a {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 10px;
+            color: white;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .social-links a:nth-child(1):hover {
+            border-color: #ec4899;
+            box-shadow: 0 0 15px rgba(236, 72, 153, 0.5);
+            background: rgba(236, 72, 153, 0.1);
+            transform: translateY(-2px);
+        }
+        .social-links a:nth-child(2):hover {
+            border-color: #00d4ff;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+            background: rgba(0, 212, 255, 0.1);
+            transform: translateY(-2px);
+        }
+        .social-links a:nth-child(3):hover {
+            border-color: #ef4444;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+            background: rgba(239, 68, 68, 0.1);
+            transform: translateY(-2px);
+        }
+        .copyright {
+            font-size: 10px;
+            color: #64748b;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 10px;
+        }
+        @media (max-width: 968px) {
+            .split-layout {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .mood-emoji {
+                font-size: 80px;
+            }
+            .mood-text {
+                font-size: 32px;
+            }
+        }
+        @media (max-width: 768px) {
+            body {
+                padding-top: 60px;
+                font-size: 13px;
+            }
+            header {
+                height: 55px;
+            }
+            .team-name {
+                font-size: 16px;
+            }
+            nav {
+                gap: 14px;
+            }
+            nav a {
+                font-size: 12px;
+            }
+            .hero-title {
+                font-size: 28px;
+            }
+            .hero-subtitle {
+                font-size: 14px;
+            }
+            .video-section, .mood-section {
+                padding: 16px;
+            }
+            .mood-emoji {
+                font-size: 70px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="team-name">🚀 TECH TITANS</div>
+            <nav>
+                <a href="index.html" class="active">Home</a>
+                <a href="about.html">About Us</a>
+                <a href="signup.html">Sign Up</a>
+                <a href="login.html">Log In</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="hero">
+            <h1 class="hero-title">CODESAPIENS MOOD DETECTOR</h1>
+            <p class="hero-subtitle">AI-Powered Real-Time Face Recognition Technology</p>
+        </div>
+
+        <div class="content-wrapper">
+            <div class="split-layout">
+                <div class="video-section">
+                    <h2 class="section-title">📹 Live Camera Feed</h2>
+                    <div class="video-container">
+                        <video id="video" width="640" height="480" autoplay muted></video>
+                        <canvas id="canvas"></canvas>
+                    </div>
+
+                    <div class="controls">
+                        <button id="startBtn" class="btn-primary">▶ Start Webcam</button>
+                        <button id="stopBtn" class="btn-primary btn-secondary" disabled>⏹ Stop Webcam</button>
+                    </div>
+                </div>
+
+                <div class="mood-section">
+                    <h2 class="section-title">🎭 Mood Detection</h2>
+                    <div class="mood-display">
+                        <div class="mood-label">Current Emotion</div>
+                        <div class="mood-text" id="moodText">--</div>
+                        <div class="mood-emoji" id="moodEmoji">😐</div>
+                        <div class="confidence-badge">
+                            Confidence: <span id="confidence">0%</span>
+                        </div>
+                    </div>
+
+                    <div class="emotion-bars">
+                        <h3>All Emotions</h3>
+                        <div class="emotion-bar">
+                            <div class="emotion-name">
+                                <span>😊 Happy</span>
+                                <span id="happy-percent">0%</span>
+                            </div>
+                            <div class="emotion-progress">
+                                <div class="emotion-fill" id="happy-bar"></div>
+                            </div>
+                        </div>
+                        <div class="emotion-bar">
+                            <div class="emotion-name">
+                                <span>😢 Sad</span>
+                                <span id="sad-percent">0%</span>
+                            </div>
+                            <div class="emotion-progress">
+                                <div class="emotion-fill" id="sad-bar"></div>
+                            </div>
+                        </div>
+                        <div class="emotion-bar">
+                            <div class="emotion-name">
+                                <span>😠 Angry</span>
+                                <span id="angry-percent">0%</span>
+                            </div>
+                            <div class="emotion-progress">
+                                <div class="emotion-fill" id="angry-bar"></div>
+                            </div>
+                        </div>
+                        <div class="emotion-bar">
+                            <div class="emotion-name">
+                                <span>😮 Surprised</span>
+                                <span id="surprised-percent">0%</span>
+                            </div>
+                            <div class="emotion-progress">
+                                <div class="emotion-fill" id="surprised-bar"></div>
+                            </div>
+                        </div>
+                        <div class="emotion-bar">
+                            <div class="emotion-name">
+                                <span>😨 Fearful</span>
+                                <span id="fearful-percent">0%</span>
+                            </div>
+                            <div class="emotion-progress">
+                                <div class="emotion-fill" id="fearful-bar"></div>
+                            </div>
+                        </div>
+                        <div class="emotion-bar">
+                            <div class="emotion-name">
+                                <span>🤢 Disgusted</span>
+                                <span id="disgusted-percent">0%</span>
+                            </div>
+                            <div class="emotion-progress">
+                                <div class="emotion-fill" id="disgusted-bar"></div>
+                            </div>
+                        </div>
+                        <div class="emotion-bar">
+                            <div class="emotion-name">
+                                <span>😐 Neutral</span>
+                                <span id="neutral-percent">0%</span>
+                            </div>
+                            <div class="emotion-progress">
+                                <div class="emotion-fill" id="neutral-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="status-info">
+                <div class="status-text" id="status">Ready to start</div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-container">
+            <div class="social-title">CONNECT WITH US</div>
+            <div class="social-links">
+                <a href="#"><span>📷</span> Instagram</a>
+                <a href="#"><span>💼</span> LinkedIn</a>
+                <a href="#"><span>🎥</span> YouTube</a>
+            </div>
+            <div class="copyright">
+                © 2025 Tech Titans | CodeSapiens Mood Detector - Week 1 Project
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const moodText = document.getElementById('moodText');
+        const moodEmoji = document.getElementById('moodEmoji');
+        const confidence = document.getElementById('confidence');
+        const statusText = document.getElementById('status');
+
+        let stream = null;
+        let modelsLoaded = false;
+
+        const emojiMap = {
+            'neutral': '😐',
+            'happy': '😊',
+            'sad': '😢',
+            'angry': '😠',
+            'fearful': '😨',
+            'disgusted': '🤢',
+            'surprised': '😮'
+        };
+
+        async function loadModels() {
+            try {
+                statusText.textContent = '⏳ Loading AI models...';
+                startBtn.disabled = true;
+
+                const MODEL_URL = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model';
+
+                await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+                await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL);
+
+                modelsLoaded = true;
+                statusText.textContent = '✅ Models loaded! Ready to start.';
+                startBtn.disabled = false;
+            } catch (error) {
+                console.error('Error loading models:', error);
+                statusText.textContent = '❌ Error loading models. Please refresh.';
+            }
+        }
+
+        async function startWebcam() {
+            try {
+                statusText.textContent = '📹 Requesting camera access...';
+
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { width: 640, height: 480 } 
+                });
+
+                video.srcObject = stream;
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+                statusText.textContent = '✨ Camera active - Detecting faces...';
+
+                video.addEventListener('play', () => {
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    detectFaces();
+                });
+
+            } catch (error) {
+                console.error('Error accessing webcam:', error);
+                statusText.textContent = '❌ Error: Cannot access camera. Please allow camera permission.';
+            }
+        }
+
+        function stopWebcam() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                video.srcObject = null;
+
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                statusText.textContent = '⏹ Camera stopped';
+
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                moodText.textContent = '--';
+                moodEmoji.textContent = '😐';
+                confidence.textContent = '0%';
+
+                const emotions = ['happy', 'sad', 'angry', 'surprised', 'fearful', 'disgusted', 'neutral'];
+                emotions.forEach(emotion => {
+                    document.getElementById(emotion + '-bar').style.width = '0%';
+                    document.getElementById(emotion + '-percent').textContent = '0%';
+                });
+            }
+        }
+
+        async function detectFaces() {
+            if (!modelsLoaded) return;
+
+            const options = new faceapi.TinyFaceDetectorOptions({
+                inputSize: 224,
+                scoreThreshold: 0.5
+            });
+
+            const detections = await faceapi
+                .detectAllFaces(video, options)
+                .withFaceExpressions();
+
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (detections.length > 0) {
+                const detection = detections[0];
+                const expressions = detection.expressions;
+
+                let maxEmotion = 'neutral';
+                let maxValue = 0;
+
+                for (const [emotion, value] of Object.entries(expressions)) {
+                    if (value > maxValue) {
+                        maxValue = value;
+                        maxEmotion = emotion;
+                    }
+                }
+
+                moodText.textContent = maxEmotion.charAt(0).toUpperCase() + maxEmotion.slice(1);
+                moodEmoji.textContent = emojiMap[maxEmotion] || '😐';
+                confidence.textContent = (maxValue * 100).toFixed(1) + '%';
+
+                for (const [emotion, value] of Object.entries(expressions)) {
+                    const percent = (value * 100).toFixed(1);
+                    document.getElementById(emotion + '-bar').style.width = percent + '%';
+                    document.getElementById(emotion + '-percent').textContent = percent + '%';
+                }
+
+                const box = detection.detection.box;
+                ctx.strokeStyle = '#00d4ff';
+                ctx.lineWidth = 3;
+                ctx.strokeRect(box.x, box.y, box.width, box.height);
+
+                ctx.fillStyle = '#00d4ff';
+                ctx.font = '16px Arial';
+                ctx.fillText(maxEmotion, box.x, box.y > 20 ? box.y - 10 : box.y + box.height + 20);
+            } else {
+                const emotions = ['happy', 'sad', 'angry', 'surprised', 'fearful', 'disgusted', 'neutral'];
+                emotions.forEach(emotion => {
+                    document.getElementById(emotion + '-bar').style.width = '0%';
+                    document.getElementById(emotion + '-percent').textContent = '0%';
+                });
+            }
+
+            if (stream && stream.active) {
+                requestAnimationFrame(detectFaces);
+            }
+        }
+
+        startBtn.addEventListener('click', startWebcam);
+        stopBtn.addEventListener('click', stopWebcam);
+        window.addEventListener('load', loadModels);
+    </script>
+</body>
+</html>
